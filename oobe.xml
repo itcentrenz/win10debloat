@@ -1,0 +1,11 @@
+<FirstExperience>
+  <oobe>
+    <defaults>
+      <language>1033</language>
+      <location>183</location>
+      <keyboard>1409:00000409</keyboard>
+      <timezone>New Zealand Standard Time</timezone>
+      <adjustForDST>true</adjustForDST>
+    </defaults>
+  </oobe>
+</FirstExperience>
