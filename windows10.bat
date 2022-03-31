@@ -25,4 +25,4 @@ if($RemainingAttempts -eq 0) {
     Write-Host "Internet Connection Failed" -BackgroundColor Red
     Exit
 }
-Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://git.io/JXBtp'))
+Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/itcentrenz/win10debloat/main/stage1.ps1'))

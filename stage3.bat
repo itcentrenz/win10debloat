@@ -29,14 +29,14 @@ If (-not(Test-Path -Path $ScriptPath -PathType Container)) {
     $null = New-Item -ItemType Directory -Path $ScriptPath -ErrorAction Continue
 }
 # Source file location
-$source = 'https://raw.githubusercontent.com/timwelchnz/windows10debloat/main/afteroobe.ps1'
+$source = 'https://raw.githubusercontent.com/itcentrenz/win10debloat/main/afteroobe.ps1'
 # Destination to save the file
 $destination = $ScriptPath + 'afteroobe.ps1'
 #Download the file
 Invoke-WebRequest -Uri $source -OutFile $destination
 Unblock-File -Path $destination
 
-$source = 'https://raw.githubusercontent.com/timwelchnz/windows10debloat/main/unattend.xml'
+$source = 'https://raw.githubusercontent.com/itcentrenz/win10debloat/main/unattend.xml'
 $ScriptPath = $Env:windir + '\Panther\'
 $UnattendXML = $ScriptPath + 'unattend.xml'
 Invoke-WebRequest -Uri $source -OutFile $UnattendXML

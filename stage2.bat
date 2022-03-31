@@ -3,7 +3,7 @@
 
 $nextStage = "stage3.bat"
 $dir = "C:\temp"
-$url = "https://raw.githubusercontent.com/timwelchnz/windows10debloat/main/$($nextStage)"
+$url = "https://raw.githubusercontent.com/itcentrenz/win10debloat/main/$($nextStage)"
 $download_path = "$($dir)\$($nextStage)"
 $Exist = (Test-Path -Path $dir)
 If (-not $Exist ) {
