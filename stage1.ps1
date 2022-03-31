@@ -1,4 +1,3 @@
-# Heavily Modified 03-11-21 as renaming machine before OOBE is pointless and therefore the reboot is un-needed.
 # Tim Welch
 # BUILD SCRIPT FOR WINDOWS 10
 
