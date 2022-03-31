@@ -325,12 +325,13 @@ elseif ($Manufacturer -eq "LENOVO") {
     Catch {Write-Warning -Message "Failed to remove Appx package: [$($AppxPackage.Name)]"}
   }
   #Download McAfee removal tool
-  $url = "https://git.io/JDTpL"
+  # This is from https://christianlehrer.com/?p=359 and was working but may need reinvestigating.
+  $url = "https://github.com/itcentrenz/win10debloat/raw/main/KillMcAfee.zip"
   $KillMcAfee = "C:\temp\KillMcAfee.zip"
   Invoke-WebRequest -Uri $url -OutFile $KillMcAfee -UseBasicParsing
   Get-Item $KillMcAfee | Unblock-File
   Expand-Archive -Path $KillMcAfee -DestinationPath "C:\temp"
-  Start-Process -Wait -FilePath “C:\temp\KillMcAfee\Mccleanup.exe” -ArgumentList “-p StopServices,MFSY,PEF,MXD,CSP,Sustainability,MOCP,MFP,APPSTATS,Auth,EMproxy,FWdiver,HW,MAS,MAT,MBK,MCPR,McProxy,McSvcHost,VUL,MHN,MNA,MOBK,MPFP,MPFPCU,MPS,SHRED,MPSCU,MQC,MQCCU,MSAD,MSHR,MSK,MSKCU,MWL,NMC,RedirSvc,VS,REMEDIATION,MSC,YAP,TRUEKEY,LAM,PCB,Symlink,SafeConnect,MGS,WMIRemover,RESIDUE -v -s” -WindowStyle Minimized
+  Start-Process -Wait -FilePath “C:\temp\MCPR\Mccleanup.exe” -ArgumentList “-p StopServices,MFSY,PEF,MXD,CSP,Sustainability,MOCP,MFP,APPSTATS,Auth,EMproxy,FWdiver,HW,MAS,MAT,MBK,MCPR,McProxy,McSvcHost,VUL,MHN,MNA,MOBK,MPFP,MPFPCU,MPS,SHRED,MPSCU,MQC,MQCCU,MSAD,MSHR,MSK,MSKCU,MWL,NMC,RedirSvc,VS,REMEDIATION,MSC,YAP,TRUEKEY,LAM,PCB,Symlink,SafeConnect,MGS,WMIRemover,RESIDUE -v -s” -WindowStyle Minimized
   Read-Host -Promt "At this point we should have silently remove McAfee etc"
 }
 else {
