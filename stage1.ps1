@@ -33,13 +33,16 @@ $InstallITCTools = Read-Host "Would you like IT Centre Tools installed? Y\[N]"
 If ("y" -eq $InstallITCTools.ToLower()){
   #Run IT Centre Tools installation
   New-Item -Path "c:\" -Name "IT Centre" -ItemType "directory"
-  $Path = "\\172.20.20.2\Temp"
+  $SourceURL = "https://raw.githubusercontent.com/itcentrenz/win10debloat/main/"
   $Destination = "C:\IT Centre"
-  $AnyDesk = "\AnyDesk\IT Centre AnyDesk Setup.exe"
-  $SolarWinds = "\N-Able\AGENT.EXE"
-  
-  Copy-Item -Path $Path$AnyDesk -Destination $Destination -Force
-  Copy-Item -Path $Path$SolarWinds -Destination $Destination -Force
+  $AnyDesk = "IT Centre AnyDesk Setup.exe"
+  $SolarWinds = "AGENT.exe"
+
+  Invoke-WebRequest -Uri ($SourceURL+($Anydesk -replace " ", "-")) -OutFile "$Destination\$Anydesk" 
+  Get-Item "$Destination\$Anydesk" | Unblock-File
+
+  Invoke-WebRequest -Uri ($SourceURL+$SolarWinds) -OutFile "$Destination\$SolarWinds" 
+  Get-Item "$Destination\$SolarWinds" | Unblock-File
   #Installation of Agents takes place after OOBE so that the machine has the correct name
 } 
 
