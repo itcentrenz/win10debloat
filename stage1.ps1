@@ -47,18 +47,6 @@ If ("y" -eq $InstallITCTools.ToLower()){
   $url = "https://itcentre.nz/wp-content/uploads/2020/09/IT-Centre-AnyDesk-Setup.exe"
   Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
   Get-Item $download_path | Unblock-File
-=======
-  $SourceURL = "https://raw.githubusercontent.com/itcentrenz/win10debloat/main/"
-  $Destination = "C:\IT Centre"
-  $AnyDesk = "IT Centre AnyDesk Setup.exe"
-  $SolarWinds = "AGENT.exe"
-
-  Invoke-WebRequest -Uri ($SourceURL+($Anydesk -replace " ", "-")) -OutFile "$Destination\$Anydesk" 
-  Get-Item "$Destination\$Anydesk" | Unblock-File
-
-  Invoke-WebRequest -Uri ($SourceURL+$SolarWinds) -OutFile "$Destination\$SolarWinds" 
-  Get-Item "$Destination\$SolarWinds" | Unblock-File
->>>>>>> 1769ac05c41e252fb312382c29e0b953f640e9a3
   #Installation of Agents takes place after OOBE so that the machine has the correct name
 } 
 
