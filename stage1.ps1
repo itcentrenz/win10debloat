@@ -33,7 +33,6 @@ $InstallITCTools = Read-Host "Would you like IT Centre Tools installed? Y\[N]"
 If ("y" -eq $InstallITCTools.ToLower()){
   #Run IT Centre Tools installation
   New-Item -Path "c:\" -Name "IT Centre" -ItemType "directory"
-<<<<<<< HEAD
   $dir = "c:\IT Centre"
   $filename = "AGENT.exe"
   $download_path = "$($dir)\$($filename)"
