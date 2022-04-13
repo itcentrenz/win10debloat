@@ -33,13 +33,19 @@ $InstallITCTools = Read-Host "Would you like IT Centre Tools installed? Y\[N]"
 If ("y" -eq $InstallITCTools.ToLower()){
   #Run IT Centre Tools installation
   New-Item -Path "c:\" -Name "IT Centre" -ItemType "directory"
-  $Path = "\\172.20.20.2\Temp"
-  $Destination = "C:\IT Centre"
-  $AnyDesk = "\AnyDesk\IT Centre AnyDesk Setup.exe"
-  $SolarWinds = "\N-Able\AGENT.EXE"
-  
-  Copy-Item -Path $Path$AnyDesk -Destination $Destination -Force
-  Copy-Item -Path $Path$SolarWinds -Destination $Destination -Force
+  $dir = "c:\IT Centre"
+  $filename = "AGENT.exe"
+  $download_path = "$($dir)\$($filename)"
+  #The following will break if the URL changes - update as required
+  $url = 'https://itcentre.nz/wp-content/uploads/2021/10/AGENT.exe'
+  Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
+  Get-Item $download_path | Unblock-File
+  $filename = "IT-Centre-AnyDesk-Setup.exe"
+  $download_path = "$($dir)\$($filename)"
+  #The following will break if the URL changes - update as required
+  $url = "https://itcentre.nz/wp-content/uploads/2020/09/IT-Centre-AnyDesk-Setup.exe"
+  Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
+  Get-Item $download_path | Unblock-File
   #Installation of Agents takes place after OOBE so that the machine has the correct name
 } 
 
