@@ -63,14 +63,14 @@ else {
 
 # Install RMM Agent if it has been requested and copied over
 $ITCFolder = "C:\IT Centre"
-$SolarWinds = "AGENT.EXE"
+$SolarWinds = "AGENT.exe"
 $Exist = (Test-Path -Path "$ITCFolder\$SolarWinds")
 If($Exist){
   start-process -filepath "$ITCFolder\$SolarWinds" -wait -passthru
 }
 
 # Install AnyDesk
-$AnyDesk = "IT Centre AnyDesk Setup.exe"
+$AnyDesk = "IT-Centre-AnyDesk-Setup.exe"
 $Exist = (Test-Path -Path "$ITCFolder\$AnyDesk")
 $arguments = "/S"
 If($Exist){
