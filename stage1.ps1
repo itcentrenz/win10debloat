@@ -33,16 +33,19 @@ $InstallITCTools = Read-Host "Would you like IT Centre Tools installed? Y\[N]"
 If ("y" -eq $InstallITCTools.ToLower()){
   #Run IT Centre Tools installation
   New-Item -Path "c:\" -Name "IT Centre" -ItemType "directory"
-  $SourceURL = "https://raw.githubusercontent.com/itcentrenz/win10debloat/main/"
-  $Destination = "C:\IT Centre"
-  $AnyDesk = "IT Centre AnyDesk Setup.exe"
-  $SolarWinds = "AGENT.exe"
-
-  Invoke-WebRequest -Uri ($SourceURL+($Anydesk -replace " ", "-")) -OutFile "$Destination\$Anydesk" 
-  Get-Item "$Destination\$Anydesk" | Unblock-File
-
-  Invoke-WebRequest -Uri ($SourceURL+$SolarWinds) -OutFile "$Destination\$SolarWinds" 
-  Get-Item "$Destination\$SolarWinds" | Unblock-File
+  $dir = "c:\IT Centre"
+  $filename = "AGENT.exe"
+  $download_path = "$($dir)\$($filename)"
+  #The following will break if the URL changes - update as required
+  $url = 'https://itcentre.nz/wp-content/uploads/2021/10/AGENT.exe'
+  Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
+  Get-Item $download_path | Unblock-File
+  $filename = "IT-Centre-AnyDesk-Setup.exe"
+  $download_path = "$($dir)\$($filename)"
+  #The following will break if the URL changes - update as required
+  $url = "https://itcentre.nz/wp-content/uploads/2020/09/IT-Centre-AnyDesk-Setup.exe"
+  Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
+  Get-Item $download_path | Unblock-File
   #Installation of Agents takes place after OOBE so that the machine has the correct name
 } 
 
@@ -329,12 +332,13 @@ elseif ($Manufacturer -eq "LENOVO") {
     Catch {Write-Warning -Message "Failed to remove Appx package: [$($AppxPackage.Name)]"}
   }
   #Download McAfee removal tool
-  $url = "https://git.io/JDTpL"
+  # This is from https://christianlehrer.com/?p=359 and was working but may need reinvestigating.
+  $url = "https://github.com/itcentrenz/win10debloat/raw/main/KillMcAfee.zip"
   $KillMcAfee = "C:\temp\KillMcAfee.zip"
   Invoke-WebRequest -Uri $url -OutFile $KillMcAfee -UseBasicParsing
   Get-Item $KillMcAfee | Unblock-File
   Expand-Archive -Path $KillMcAfee -DestinationPath "C:\temp"
-  Start-Process -Wait -FilePath “C:\temp\KillMcAfee\Mccleanup.exe” -ArgumentList “-p StopServices,MFSY,PEF,MXD,CSP,Sustainability,MOCP,MFP,APPSTATS,Auth,EMproxy,FWdiver,HW,MAS,MAT,MBK,MCPR,McProxy,McSvcHost,VUL,MHN,MNA,MOBK,MPFP,MPFPCU,MPS,SHRED,MPSCU,MQC,MQCCU,MSAD,MSHR,MSK,MSKCU,MWL,NMC,RedirSvc,VS,REMEDIATION,MSC,YAP,TRUEKEY,LAM,PCB,Symlink,SafeConnect,MGS,WMIRemover,RESIDUE -v -s” -WindowStyle Minimized
+  Start-Process -Wait -FilePath “C:\temp\MCPR\Mccleanup.exe” -ArgumentList “-p StopServices,MFSY,PEF,MXD,CSP,Sustainability,MOCP,MFP,APPSTATS,Auth,EMproxy,FWdiver,HW,MAS,MAT,MBK,MCPR,McProxy,McSvcHost,VUL,MHN,MNA,MOBK,MPFP,MPFPCU,MPS,SHRED,MPSCU,MQC,MQCCU,MSAD,MSHR,MSK,MSKCU,MWL,NMC,RedirSvc,VS,REMEDIATION,MSC,YAP,TRUEKEY,LAM,PCB,Symlink,SafeConnect,MGS,WMIRemover,RESIDUE -v -s” -WindowStyle Minimized
   Read-Host -Promt "At this point we should have silently remove McAfee etc"
 }
 else {
