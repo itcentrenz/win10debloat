@@ -210,13 +210,14 @@ catch {
 
 $Applications = @(
   "Google.Chrome"
-  "Adobe.Acrobat.Reader.32-bit"
+  "Adobe.Acrobat.Reader.64-bit"
   "VideoLAN.VLC"
 )
 Write-Host "Installing Applications" -BackgroundColor Green -ForegroundColor Black
 Foreach ($application in $Applications) {
-  Winget install -e $application -h --accept-source-agreements --accept-package-agreements --force
+  Winget install -e $application -h --accept-source-agreements --accept-package-agreements --force --log "$Destination\$application.log"
 }
+Read-Host -Prompt "Check if the Apps installed, then press any key to continue"
 
 #Ads deliver malware and lead users to install fake programs.
 Write-Host "Installing UBlock Origin Extension in Google Chrome" -BackgroundColor Blue
