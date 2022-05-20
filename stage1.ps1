@@ -2,6 +2,7 @@
 # BUILD SCRIPT FOR WINDOWS 10
 
 $nextStage = "stage2.bat"
+$logDir = "C:\Temp"
 $dir = "C:\temp"
 $url = "https://raw.githubusercontent.com/itcentrenz/win10debloat/main/$($nextStage)"
 $download_path = "$($dir)\$($nextStage)"
@@ -218,7 +219,7 @@ $Applications = @(
 )
 Write-Host "Installing Applications" -BackgroundColor Green -ForegroundColor Black
 Foreach ($application in $Applications) {
-  Winget install -e $application -h --accept-source-agreements --accept-package-agreements --force --log "$Destination\$application.log"
+  Winget install -e $application -h --accept-source-agreements --accept-package-agreements --force --log "$logDir\$application.log"
 }
 Read-Host -Prompt "Check if the Apps installed, then press any key to continue"
 
