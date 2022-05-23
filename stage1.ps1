@@ -206,9 +206,17 @@ catch {
   $VCLibs_path = "$env:USERPROFILE\Downloads\Microsoft.VCLibs.x64.14.00.Desktop.appx"
   Invoke-WebRequest -Uri $VCLibsURL -OutFile $VCLibs_path -UseBasicParsing
   Get-Item $VCLibs_path | Unblock-File
+  
+  #WINGET Relies on XAML https://docs.microsoft.com/en-us/troubleshoot/cpp/c-runtime-packages-desktop-bridge
+  $UI_XAML_URL = "http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/3c580009-888f-4f54-a0d4-76fb69769b2e?P1=1653263718&P2=404&P3=2&P4=i1D9dGMRb%2beLdH8KzVu4KIIlD%2bRqcvlgeqlddEhbBKyCdsXof7re29pJcdzrCkDP%2bYGT4HXUIlnWiWNLIV6qOg%3d%3d"
+  $UI_XAML_path = "$env:USERPROFILE\Downloads\Microsoft.UI.Xaml.2.7_7.2203.17001.0_x86__8wekyb3d8bbwe.appx"
+  Invoke-WebRequest -Uri $UI_XAML_URL -OutFile $UI_XAML_path -UseBasicParsing
+  Get-Item $UI_XAML_path | Unblock-File
+
 
   Import-Module -Name Appx -Force
   Add-AppxPackage -Path $VCLibs_path -confirm:$false
+  Add-AppxPackage -Path $UI_XAML_path -confirm:$false
   Add-AppxPackage -Path $download_path -confirm:$false
 }
 
