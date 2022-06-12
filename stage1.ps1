@@ -347,7 +347,7 @@ elseif ($Manufacturer -eq "LENOVO") {
   Invoke-WebRequest -Uri $url -OutFile $KillMcAfee -UseBasicParsing
   Get-Item $KillMcAfee | Unblock-File
   Expand-Archive -Path $KillMcAfee -DestinationPath "C:\temp"
-  Start-Process -Wait -FilePath “C:\temp\MCPR\Mccleanup.exe” -ArgumentList “-p StopServices,MFSY,PEF,MXD,CSP,Sustainability,MOCP,MFP,APPSTATS,Auth,EMproxy,FWdiver,HW,MAS,MAT,MBK,MCPR,McProxy,McSvcHost,VUL,MHN,MNA,MOBK,MPFP,MPFPCU,MPS,SHRED,MPSCU,MQC,MQCCU,MSAD,MSHR,MSK,MSKCU,MWL,NMC,RedirSvc,VS,REMEDIATION,MSC,YAP,TRUEKEY,LAM,PCB,Symlink,SafeConnect,MGS,WMIRemover,RESIDUE -v -s” -WindowStyle Minimized
+  Start-Process -Wait -FilePath "C:\temp\MCPR\Mccleanup.exe" -ArgumentList "-p StopServices,MFSY,PEF,MXD,CSP,Sustainability,MOCP,MFP,APPSTATS,Auth,EMproxy,FWdiver,HW,MAS,MAT,MBK,MCPR,McProxy,McSvcHost,VUL,MHN,MNA,MOBK,MPFP,MPFPCU,MPS,SHRED,MPSCU,MQC,MQCCU,MSAD,MSHR,MSK,MSKCU,MWL,NMC,RedirSvc,VS,REMEDIATION,MSC,YAP,TRUEKEY,LAM,PCB,Symlink,SafeConnect,MGS,WMIRemover,RESIDUE -v -s" -WindowStyle Minimized
   Read-Host -Promt "At this point we should have silently remove McAfee etc"
 }
 else {
