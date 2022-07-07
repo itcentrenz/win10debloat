@@ -38,7 +38,7 @@ If ("y" -eq $InstallITCTools.ToLower()){
   $filename = "AGENT.exe"
   $download_path = "$($dir)\$($filename)"
   #The following will break if the URL changes - update as required
-  $url = 'https://itcentre.nz/wp-content/uploads/2021/10/AGENT.exe'
+  $url = 'https://itcentre.nz/wp-content/uploads/2022/07/AGENT.exe'
   Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
   Get-Item $download_path | Unblock-File
   $filename = "IT-Centre-AnyDesk-Setup.exe"
@@ -229,7 +229,6 @@ Write-Host "Installing Applications" -BackgroundColor Green -ForegroundColor Bla
 Foreach ($application in $Applications) {
   Winget install -e $application -h --accept-source-agreements --accept-package-agreements --force --log "$logDir\$application.log"
 }
-Read-Host -Prompt "Check if the Apps installed, then press any key to continue"
 
 #Ads deliver malware and lead users to install fake programs.
 Write-Host "Installing UBlock Origin Extension in Google Chrome" -BackgroundColor Blue
