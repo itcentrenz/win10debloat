@@ -265,7 +265,7 @@ $ServiceManager = New-Object -ComObject "Microsoft.Update.ServiceManager"
 $ServiceManager.ClientApplicationID = "Update Other Microsoft Products"
 $NewService = $ServiceManager.AddService2("7971f918-a847-4430-9279-4a52d1efe18d",7,"")
 
-Write-Host "Checking if HP and remove bloatware..." -BackgroundColor Blue
+Write-Host "Checking if HP or Lenvo, then removing bloatware..." -BackgroundColor Blue
 $Manufacturer = (Get-CimInstance -ClassName Win32_ComputerSystem).Manufacturer
 If ($Manufacturer -eq "HP" -Or $Manufacturer -eq "Hewlett-Packard") {
   Write-Host "This is an HP and we're about to remove bloatware..." -BackgroundColor Blue
@@ -314,7 +314,7 @@ If ($Manufacturer -eq "HP" -Or $Manufacturer -eq "Hewlett-Packard") {
 }
 elseif ($Manufacturer -eq "LENOVO") {
   Write-Host "This is an Lenovo and we're about to remove bloatware..." -BackgroundColor Blue
-  Read-Host -Promt "Waiting for input"
+  # Read-Host -Promt "Waiting for input"
   # List of built-in apps to remove
   $UninstallPackages = @(
       "4505Fortemedia.FMAPOControl"
@@ -347,7 +347,7 @@ elseif ($Manufacturer -eq "LENOVO") {
   Get-Item $KillMcAfee | Unblock-File
   Expand-Archive -Path $KillMcAfee -DestinationPath "C:\temp"
   Start-Process -Wait -FilePath "C:\temp\MCPR\Mccleanup.exe" -ArgumentList "-p StopServices,MFSY,PEF,MXD,CSP,Sustainability,MOCP,MFP,APPSTATS,Auth,EMproxy,FWdiver,HW,MAS,MAT,MBK,MCPR,McProxy,McSvcHost,VUL,MHN,MNA,MOBK,MPFP,MPFPCU,MPS,SHRED,MPSCU,MQC,MQCCU,MSAD,MSHR,MSK,MSKCU,MWL,NMC,RedirSvc,VS,REMEDIATION,MSC,YAP,TRUEKEY,LAM,PCB,Symlink,SafeConnect,MGS,WMIRemover,RESIDUE -v -s" -WindowStyle Minimized
-  Read-Host -Promt "At this point we should have silently remove McAfee etc"
+  # Read-Host -Promt "At this point we should have silently remove McAfee etc"
 }
 else {
   Write-Host "This host is not an HP or a Lenovo" -BackgroundColor Magenta
