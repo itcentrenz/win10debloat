@@ -38,7 +38,7 @@ If ("y" -eq $InstallITCTools.ToLower()){
   $filename = "AGENT.exe"
   $download_path = "$($dir)\$($filename)"
   #The following will break if the URL changes - update as required
-  $url = 'https://itcentre.nz/wp-content/uploads/2022/07/AGENT.exe'
+  $url = 'https://itcentre.nz/wp-content/uploads/2022/11/AGENT.exe'
   Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
   Get-Item $download_path | Unblock-File
   $filename = "IT-Centre-AnyDesk-Setup.exe"
