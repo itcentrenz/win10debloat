@@ -44,7 +44,7 @@ If ("y" -eq $InstallITCTools.ToLower()){
   $filename = "IT-Centre-AnyDesk-Setup.exe"
   $download_path = "$($dir)\$($filename)"
   #The following will break if the URL changes - update as required
-  $url = "https://itcentre.nz/wp-content/uploads/2020/09/IT-Centre-AnyDesk-Setup.exe"
+  $url = "https://itcentre.nz/wp-content/uploads/2023/03/IT-Centre-AnyDesk-Setup.exe"
   Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
   Get-Item $download_path | Unblock-File
   #Installation of Agents takes place after OOBE so that the machine has the correct name
