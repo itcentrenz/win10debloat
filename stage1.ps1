@@ -38,7 +38,7 @@ If ("y" -eq $InstallITCTools.ToLower()){
   $filename = "AGENT.exe"
   $download_path = "$($dir)\$($filename)"
   #The following will break if the URL changes - update as required
-  $url = 'https://itcentre.nz/wp-content/uploads/2022/11/AGENT.exe'
+  $url = 'https://itcentre.nz/wp-content/uploads/2023/07/AGENT.exe'
   Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
   Get-Item $download_path | Unblock-File
   $filename = "IT-Centre-AnyDesk-Setup.exe"
@@ -132,6 +132,11 @@ $DefaultRemove = @(
     "Microsoft.YourPhone"
     "Microsoft.ZuneMusic"
     "Microsoft.ZuneVideo"
+    "DropboxInc.Dropbox"
+    "Microsoft.GamingApp"
+    "MicrosoftTeams"
+    "AD2F1837.HPJumpStart"
+	"7EE7776C.LinkedInforWindows"
 )
 
 ForEach ($toremove in $DefaultRemove) {
