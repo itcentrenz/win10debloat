@@ -13,6 +13,9 @@ If (-not $Exist ) {
 Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
 Get-Item $download_path | Unblock-File
 
+# Disable UAC prompts for Administrator
+REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v FilterAdministratorToken /t REG_DWORD /d 0 /f
+
 #Set Language to NZ 
 Install-Language -Language en-nz
 Set-Culture en-NZ
@@ -155,7 +158,7 @@ Get-Item $StartBin | Unblock-File
 If (!(Test-Path -Path $StartDest)) {New-Item $StartDest -Force -Type Directory} 
 Copy-Item $startBin -Destination $StartDest
 Write-Host "Completed importing new Start Menu" -BackgroundColor Green -ForegroundColor Black
-
+Read-Host -prompt "Enter to continue."
 Write-Host "Download and install Winget" -BackgroundColor Blue
 #Download and install the latest version of Winget CLI Package Manager
 try {
@@ -400,5 +403,5 @@ Get-WindowsUpdate -install -acceptall -IgnoreReboot -Confirm:$false -Verbose -No
 $value = "$($dir)\$($nextStage)"
 $name = "!$($nextStage)"
 New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "RunOnce" -Force
-#Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name $name -Value $value -Force
-#Restart-Computer -Force -Confirm:$false
+Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name $name -Value $value -Force
+Restart-Computer -Force -Confirm:$false

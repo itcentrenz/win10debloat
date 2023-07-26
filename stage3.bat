@@ -4,6 +4,9 @@
 # Kill Sysprep before trying to run it again...
 Stop-Process -name Sysprep -Force
 
+# Enable UAC prompts for Administrator
+REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v FilterAdministratorToken /t REG_DWORD /d 1 /f
+
 $path = $Env:windir + '\system32\oobe\info\'
 If (-not(Test-Path -Path $path -PathType Container)) {
     $null = New-Item -ItemType Directory -Path $path -ErrorAction Continue
