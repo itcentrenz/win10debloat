@@ -138,60 +138,22 @@ $DefaultRemove = @(
     "MicrosoftTeams"
     "AD2F1837.HPJumpStart"
 	"7EE7776C.LinkedInforWindows"
-	"MicrosoftWindows.Client.WebExperience"
 )
 
 ForEach ($toremove in $DefaultRemove) {
-    Get-ProvisionedAppxPackage -Online | Where-Object DisplayName -EQ $toremove | Remove-ProvisionedAppxPackage -Online -AllUsers | Out-Null
+    Get-ProvisionedAppxPackage -Online | Where-Object DisplayName -EQ $toremove | Remove-ProvisionedAppxPackage -Online -AllUsers
     Write-Host "REMOVED: $toremove" -BackgroundColor Green -ForegroundColor Black
 }
 Write-Host "Completed automatic removal of provisioned apps" -BackgroundColor Magenta
 
-#Remove Paint 3D edit from Explorer Context
-$AppExtensions = @(
-    ".bmp"
-    ".gif"
-    ".jpeg"
-    ".jpg"
-    ".jpe"
-    ".png"
-    ".tiff"
-    ".tif"
-)
-ForEach ($AppExtension in $AppExtensions) {
-  Remove-Item -Path "HKLM:\SOFTWARE\Classes\SystemFileAssociations\$AppExtension\Shell\3D Edit" -Recurse
-}
-Write-Host "Removed Paint3D from Explorer Context" -BackgroundColor Green -ForegroundColor Black
-
-$StartLayoutStr = @"
-<LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout" xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout" Version="1" xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification">
-  <LayoutOptions StartTileGroupCellWidth="6" />
-  <DefaultLayoutOverride>
-    <StartLayoutCollection>
-      <defaultlayout:StartLayout GroupCellWidth="6">
-        <start:Group Name="Internet">
-          <start:DesktopApplicationTile Size="2x2" Column="2" Row="0" DesktopApplicationID="MSEdge" />
-          <start:DesktopApplicationTile Size="2x2" Column="0" Row="0" DesktopApplicationID="Chrome" />
-        </start:Group>
-      </defaultlayout:StartLayout>
-    </StartLayoutCollection>
-  </DefaultLayoutOverride>
-</LayoutModificationTemplate>
-"@
-
-# This changes the default user start menu and the currently logged in user
-add-content $Env:TEMP\startlayout.xml $StartLayoutStr
-import-startlayout -layoutpath $Env:TEMP\startlayout.xml -mountpath $Env:SYSTEMDRIVE\
-New-Item -Path HKCU:\SOFTWARE\Policies\Microsoft\Windows -Name Explorer -ErrorAction SilentlyContinue
-Reg Add "HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer" /V LockedStartLayout /T REG_DWORD /D 1 /F
-Reg Add "HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer" /V StartLayoutFile /T REG_EXPAND_SZ /D '$Env:TEMP\startlayout.xml' /F
-Stop-Process -ProcessName explorer
-Start-Sleep -s 10
-#sleep is to let explorer finish restart b4 deleting reg keys
-Remove-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "LockedStartLayout" -Force
-Remove-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "StartLayoutFile" -Force
-Stop-Process -ProcessName explorer
-remove-item $Env:TEMP\startlayout.xml -ErrorAction SilentlyContinue -Force
+# Copy template Start Menu (start.bin) to Default User
+$url = "https://github.com/itcentrenz/win10debloat/raw/main/start.bin"
+$StartBin = "C:\temp\start.bin"
+$StartDest = "C:\Users\Default\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState"
+Invoke-WebRequest -Uri $url -OutFile $StartBin -UseBasicParsing
+Get-Item $StartBin | Unblock-File
+If (!(Test-Path -Path $StartDest)) {New-Item $StartDest -Force -Type Directory} 
+Copy-Item $startBin -Destination $StartDest
 Write-Host "Completed importing new Start Menu" -BackgroundColor Green -ForegroundColor Black
 
 Write-Host "Download and install Winget" -BackgroundColor Blue
@@ -236,6 +198,19 @@ Write-Host "Installing Applications" -BackgroundColor Green -ForegroundColor Bla
 Foreach ($application in $Applications) {
   Winget install -e $application -h --accept-source-agreements --accept-package-agreements --force --log "$logDir\$application.log"
 }
+
+# Install M365
+$url = "https://github.com/itcentrenz/win10debloat/raw/main/setup.exe"
+$M365Setup = "C:\temp\setup.exe"
+Invoke-WebRequest -Uri $url -OutFile $M365Setup -UseBasicParsing
+Get-Item $M365Setup | Unblock-File
+$url = "https://github.com/itcentrenz/win10debloat/raw/main/Configuration-M365BusApps.xml"
+$M365Conf = "C:\temp\Configuration-M365BusApps.xml"
+Invoke-WebRequest -Uri $url -OutFile $M365Conf -UseBasicParsing
+Get-Item $M365Conf | Unblock-File
+
+Start-Process -Wait -FilePath $M365Setup -ArgumentList ("/configure " + $M365Conf)
+Read-Host -prompt "M365 install complete"
 
 #Ads deliver malware and lead users to install fake programs.
 Write-Host "Installing UBlock Origin Extension in Google Chrome" -BackgroundColor Blue
@@ -388,6 +363,27 @@ else {
   }
 }
 
+# Customize the Taskbar and Desktop icons for the Default User
+REG LOAD HKLM\Default C:\Users\Default\NTUSER.DAT
+ 
+# Removes Widgets from the Taskbar
+REG ADD "HKLM\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v TaskbarDa /t REG_DWORD /d 0 /f
+ 
+# Removes Chat from the Taskbar
+REG ADD "HKLM\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v TaskbarMn /t REG_DWORD /d 0 /f
+ 
+# Set Search in Taskbar to icon only
+REG ADD "HKLM\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v SearchboxTaskbarMode /t REG_DWORD /d 1 /f
+
+# Turn on My Computer on the Desktop
+REG ADD "HKLM\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" /v {20D04FE0-3AEA-1069-A2D8-08002B30309D} /t REG_DWORD /d 0 /f
+
+# Turn on User's Files on the Desktop
+REG ADD "HKLM\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" /v {59031a47-3f72-44a7-89c5-5595fe6b30ee} /t REG_DWORD /d 0 /f
+
+REG UNLOAD HKLM\Default
+Read-Host -prompt "Customized Taskbar and Desktop reg values"
+
 Clear-Host 
 Write-Host "Running Windows Updates" -BackgroundColor Blue
 Set-ExecutionPolicy Bypass -Force -Confirm:$false
@@ -404,5 +400,5 @@ Get-WindowsUpdate -install -acceptall -IgnoreReboot -Confirm:$false -Verbose -No
 $value = "$($dir)\$($nextStage)"
 $name = "!$($nextStage)"
 New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "RunOnce" -Force
-Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name $name -Value $value -Force
-Restart-Computer -Force -Confirm:$false
+#Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name $name -Value $value -Force
+#Restart-Computer -Force -Confirm:$false
