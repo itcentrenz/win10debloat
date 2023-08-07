@@ -13,7 +13,8 @@ If (-not $Exist ) {
 Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
 Get-Item $download_path | Unblock-File
 
-#Set Language to NZ 
+#Set Language to NZ
+Write-Host "Installing English-NZ, this can take a couple of minutes."
 Install-Language -Language en-nz
 Set-Culture en-NZ
 Set-WinSystemLocale -SystemLocale en-NZ

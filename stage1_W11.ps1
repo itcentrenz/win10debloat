@@ -17,6 +17,7 @@ Get-Item $download_path | Unblock-File
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v FilterAdministratorToken /t REG_DWORD /d 0 /f
 
 #Set Language to NZ 
+Write-Host "Installing English-NZ, this can take a couple of minutes."
 Install-Language -Language en-nz
 Set-Culture en-NZ
 Set-WinSystemLocale -SystemLocale en-NZ
