@@ -159,7 +159,7 @@ Get-Item $StartBin | Unblock-File
 If (!(Test-Path -Path $StartDest)) {New-Item $StartDest -Force -Type Directory} 
 Copy-Item $startBin -Destination $StartDest
 Write-Host "Completed importing new Start Menu" -BackgroundColor Green -ForegroundColor Black
-Read-Host -prompt "Enter to continue."
+#Read-Host -prompt "Enter to continue."
 Write-Host "Download and install Winget" -BackgroundColor Blue
 #Download and install the latest version of Winget CLI Package Manager
 try {
@@ -204,6 +204,7 @@ Foreach ($application in $Applications) {
 }
 
 # Install M365
+Write-Host "Installing M365" -BackgroundColor Green -ForegroundColor Black
 $url = "https://github.com/itcentrenz/win10debloat/raw/main/setup.exe"
 $M365Setup = "C:\temp\setup.exe"
 Invoke-WebRequest -Uri $url -OutFile $M365Setup -UseBasicParsing
@@ -214,7 +215,7 @@ Invoke-WebRequest -Uri $url -OutFile $M365Conf -UseBasicParsing
 Get-Item $M365Conf | Unblock-File
 
 Start-Process -Wait -FilePath $M365Setup -ArgumentList ("/configure " + $M365Conf)
-Read-Host -prompt "M365 install complete"
+Write-Host "M365 install complete" -BackgroundColor Green -ForegroundColor Black
 
 #Ads deliver malware and lead users to install fake programs.
 Write-Host "Installing UBlock Origin Extension in Google Chrome" -BackgroundColor Blue
@@ -386,7 +387,7 @@ REG ADD "HKLM\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDes
 REG ADD "HKLM\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" /v "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" /t REG_DWORD /d 0 /f
 
 REG UNLOAD HKLM\Default
-Read-Host -prompt "Customized Taskbar and Desktop reg values"
+#Read-Host -prompt "Customized Taskbar and Desktop reg values"
 
 Clear-Host 
 Write-Host "Running Windows Updates" -BackgroundColor Blue
