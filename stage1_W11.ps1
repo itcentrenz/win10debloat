@@ -16,24 +16,16 @@ Get-Item $download_path | Unblock-File
 # Disable UAC prompts for Administrator
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v FilterAdministratorToken /t REG_DWORD /d 0 /f
 
-#Set Language to NZ 
-Write-Host "Installing English-NZ, this can take a couple of minutes."
-Install-Language -Language en-nz
-Set-Culture en-NZ
-Set-WinSystemLocale -SystemLocale en-NZ
-Set-TimeZone -Name 'New Zealand Standard Time'
-Set-WinHomeLocation -GeoId 0xb7
-Set-WinUserLanguageList en-NZ -Force -Confirm:$false
-
 #Rename Computer - Update 03/11/21 There is no point in doing this as it gets rewritten during OOBE - so we write it to a file and then rename as part of OOBE
-Write-Host "Renaming Computer"
-Write-Host "Current computer name is: $env:COMPUTERNAME"
-$NewComputerName = Read-Host "Enter new computer name, or just hit [Enter] to rename to serial number"
-If ("" -eq $NewComputerName){
-    $NewComputerName = Get-CimInstance -ClassName Win32_BIOS -Property SerialNumber | Select-Object -ExpandProperty SerialNumber
-} 
-add-content -Path "$($dir)\computername.txt" $NewComputerName
-Write-Host "New computername after OOBE will be: $NewComputerName"
+# Removed the Rename operation for Windows 11, as it now prompts anyway
+# Write-Host "Renaming Computer"
+# Write-Host "Current computer name is: $env:COMPUTERNAME"
+# $NewComputerName = Read-Host "Enter new computer name, or just hit [Enter] to rename to serial number"
+# If ("" -eq $NewComputerName){
+#    $NewComputerName = Get-CimInstance -ClassName Win32_BIOS -Property SerialNumber | Select-Object -ExpandProperty SerialNumber
+# } 
+# add-content -Path "$($dir)\computername.txt" $NewComputerName
+# Write-Host "New computername after OOBE will be: $NewComputerName"
 
 $InstallITCTools = Read-Host "Would you like IT Centre Tools installed? Y\[N]"
 If ("y" -eq $InstallITCTools.ToLower()){
@@ -69,6 +61,15 @@ If (-not $Exist ) {
 Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
 Get-Item $download_path | Unblock-File
 # Moved adding to registry to end before reboot.
+
+#Set Language to NZ 
+Write-Host "Installing English-NZ, this can take a couple of minutes."
+Install-Language -Language en-nz
+Set-Culture en-NZ
+Set-WinSystemLocale -SystemLocale en-NZ
+Set-TimeZone -Name 'New Zealand Standard Time'
+Set-WinHomeLocation -GeoId 0xb7
+Set-WinUserLanguageList en-NZ -Force -Confirm:$false
 
 # Remove Microsoft News and Interests from Taskbar
 Write-Host "Remove News and Interests"
