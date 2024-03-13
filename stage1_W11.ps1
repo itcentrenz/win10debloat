@@ -161,6 +161,7 @@ If (!(Test-Path -Path $StartDest)) {New-Item $StartDest -Force -Type Directory}
 Copy-Item $startBin -Destination $StartDest
 Write-Host "Completed importing new Start Menu" -BackgroundColor Green -ForegroundColor Black
 #Read-Host -prompt "Enter to continue."
+
 Write-Host "Download and install Winget" -BackgroundColor Blue
 #Download and install the latest version of Winget CLI Package Manager
 try {
@@ -182,8 +183,8 @@ catch {
   Get-Item $VCLibs_path | Unblock-File
   
   #WINGET Relies on XAML 
-  $UI_XAML_URL = "https://github.com/itcentrenz/win10debloat/raw/main/Microsoft.UI.Xaml.2.7_7.2203.17001.0_x64__8wekyb3d8bbwe.Appx"
-  $UI_XAML_path = "$env:USERPROFILE\Downloads\Microsoft.UI.Xaml.2.7_7.2203.17001.0_x64__8wekyb3d8bbwe.appx"
+  $UI_XAML_URL = "https://github.com/itcentrenz/win10debloat/raw/main/Microsoft.UI.Xaml.2.8.appx"
+  $UI_XAML_path = "$env:USERPROFILE\Downloads\Microsoft.UI.Xaml.2.8.appx"
   Invoke-WebRequest -Uri $UI_XAML_URL -OutFile $UI_XAML_path -UseBasicParsing
   Get-Item $UI_XAML_path | Unblock-File
 

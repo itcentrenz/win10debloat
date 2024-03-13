@@ -13,15 +13,6 @@ If (-not $Exist ) {
 Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
 Get-Item $download_path | Unblock-File
 
-#Set Language to NZ
-Write-Host "Installing English-NZ, this can take a couple of minutes."
-Install-Language -Language en-nz
-Set-Culture en-NZ
-Set-WinSystemLocale -SystemLocale en-NZ
-Set-TimeZone -Name 'New Zealand Standard Time'
-Set-WinHomeLocation -GeoId 0xb7
-Set-WinUserLanguageList en-NZ -Force -Confirm:$false
-
 #Rename Computer - Update 03/11/21 There is no point in doing this as it gets rewritten during OOBE - so we write it to a file and then rename as part of OOBE
 Write-Host "Renaming Computer"
 Write-Host "Current computer name is: $env:COMPUTERNAME"
@@ -51,6 +42,15 @@ If ("y" -eq $InstallITCTools.ToLower()){
   Get-Item $download_path | Unblock-File
   #Installation of Agents takes place after OOBE so that the machine has the correct name
 } 
+
+#Set Language to NZ
+Write-Host "Installing English-NZ, this can take a couple of minutes."
+Install-Language -Language en-nz
+Set-Culture en-NZ
+Set-WinSystemLocale -SystemLocale en-NZ
+Set-TimeZone -Name 'New Zealand Standard Time'
+Set-WinHomeLocation -GeoId 0xb7
+Set-WinUserLanguageList en-NZ -Force -Confirm:$false
 
 #Add Windows Forms Assembly as it seems to be missing on a lot of machines
 Add-Type -AssemblyName System.Windows.Forms
@@ -216,8 +216,8 @@ catch {
   Get-Item $VCLibs_path | Unblock-File
   
   #WINGET Relies on XAML 
-  $UI_XAML_URL = "https://github.com/itcentrenz/win10debloat/raw/main/Microsoft.UI.Xaml.2.7_7.2203.17001.0_x64__8wekyb3d8bbwe.Appx"
-  $UI_XAML_path = "$env:USERPROFILE\Downloads\Microsoft.UI.Xaml.2.7_7.2203.17001.0_x64__8wekyb3d8bbwe.appx"
+  $UI_XAML_URL = "https://github.com/itcentrenz/win10debloat/raw/main/Microsoft.UI.Xaml.2.8.appx"
+  $UI_XAML_path = "$env:USERPROFILE\Downloads\Microsoft.UI.Xaml.2.8.appx"
   Invoke-WebRequest -Uri $UI_XAML_URL -OutFile $UI_XAML_path -UseBasicParsing
   Get-Item $UI_XAML_path | Unblock-File
 
