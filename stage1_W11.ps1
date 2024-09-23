@@ -13,10 +13,22 @@ If (-not $Exist ) {
 Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
 Get-Item $download_path | Unblock-File
 
+# Set up logging
+$logFile = "Focus_W11_Setup.log"
+$logFullPath = "$($logDir)\$($logFile)"
+
+Function Write-Log {
+    Param (
+        [string]$LogString
+    )
+    Add-Content -Path $logFullPath -Value $LogString
+}
+
+
+
 # Disable UAC prompts for Administrator
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v FilterAdministratorToken /t REG_DWORD /d 0 /f
 
-#Rename Computer - Update 03/11/21 There is no point in doing this as it gets rewritten during OOBE - so we write it to a file and then rename as part of OOBE
 # Removed the Rename operation for Windows 11, as it now prompts anyway
 # Write-Host "Renaming Computer"
 # Write-Host "Current computer name is: $env:COMPUTERNAME"
@@ -27,7 +39,7 @@ REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v Filt
 # add-content -Path "$($dir)\computername.txt" $NewComputerName
 # Write-Host "New computername after OOBE will be: $NewComputerName"
 
-$InstallITCTools = Read-Host "Would you like IT Centre Tools installed? Y\[N]"
+$InstallITCTools = Read-Host "Would you like IT Centre Tools installed (Anydesk & N-Able RMM)? Y\[N]"
 If ("y" -eq $InstallITCTools.ToLower()){
   #Run IT Centre Tools installation
   New-Item -Path "c:\" -Name "IT Centre" -ItemType "directory"
@@ -45,6 +57,7 @@ If ("y" -eq $InstallITCTools.ToLower()){
   Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
   Get-Item $download_path | Unblock-File
   #Installation of Agents takes place after OOBE so that the machine has the correct name
+  Write-Log "IT Centre tools set to install after OOBDE."
 } 
 
 #Add Windows Forms Assembly as it seems to be missing on a lot of machines
@@ -60,6 +73,7 @@ If (-not $Exist ) {
 }
 Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
 Get-Item $download_path | Unblock-File
+Write-Log "Stage 2 downloaded."
 # Moved adding to registry to end before reboot.
 
 #Set Language to NZ 
@@ -70,6 +84,7 @@ Set-WinSystemLocale -SystemLocale en-NZ
 Set-TimeZone -Name 'New Zealand Standard Time'
 Set-WinHomeLocation -GeoId 0xb7
 Set-WinUserLanguageList en-NZ -Force -Confirm:$false
+Write-Log "English-NZ installed."
 
 # Remove Microsoft News and Interests from Taskbar
 Write-Host "Remove News and Interests"
@@ -98,6 +113,7 @@ if ($Exist) {
     New-ItemProperty -Path $registryPath -Name $Name -Value $value -PropertyType DWord
 }
 Write-Host "Removed Meet Now from Taskbar" -BackgroundColor Green -ForegroundColor Black
+Write-Log "Taskbar configured."
 
 Write-Host "Disable Turn-on Automatic Setup of Network Connected Devices"
 # DISABLE 'TURN ON AUTOMATIC SETUP OF NETWORK CONNECTED DEVICES' (Automatically adds printers)
@@ -150,6 +166,7 @@ ForEach ($toremove in $DefaultRemove) {
     Write-Host "REMOVED: $toremove" -BackgroundColor Green -ForegroundColor Black
 }
 Write-Host "Completed automatic removal of provisioned apps" -BackgroundColor Magenta
+Write-Log "Completed automatic removal of provisioned apps."
 
 # Copy template Start Menu (start.bin) to Default User
 $url = "https://github.com/itcentrenz/win10debloat/raw/main/start.bin"
@@ -160,6 +177,7 @@ Get-Item $StartBin | Unblock-File
 If (!(Test-Path -Path $StartDest)) {New-Item $StartDest -Force -Type Directory} 
 Copy-Item $startBin -Destination $StartDest
 Write-Host "Completed importing new Start Menu" -BackgroundColor Green -ForegroundColor Black
+Write-Log "Completed importing new Start Menu."
 #Read-Host -prompt "Enter to continue."
 
 Write-Host "Download and install Winget" -BackgroundColor Blue
@@ -204,6 +222,7 @@ Write-Host "Installing Applications" -BackgroundColor Green -ForegroundColor Bla
 Foreach ($application in $Applications) {
   Winget install -e $application -h --accept-source-agreements --accept-package-agreements --force --log "$logDir\$application.log"
 }
+Write-Log "Third-party applications installed."
 
 # Install M365
 Write-Host "Installing M365" -BackgroundColor Green -ForegroundColor Black
@@ -218,6 +237,7 @@ Get-Item $M365Conf | Unblock-File
 
 Start-Process -Wait -FilePath $M365Setup -ArgumentList ("/configure " + $M365Conf)
 Write-Host "M365 install complete" -BackgroundColor Green -ForegroundColor Black
+Write-Log "M365 install complete."
 
 #Ads deliver malware and lead users to install fake programs.
 Write-Host "Installing UBlock Origin Extension in Google Chrome" -BackgroundColor Blue
@@ -300,6 +320,8 @@ If ($Manufacturer -eq "HP" -Or $Manufacturer -eq "Hewlett-Packard") {
   #Remove Adobe Trial Shortcuts
   Remove-Item -LiteralPath "C:\Program Files (x86)\Online Services" -Force -Recurse -ErrorAction SilentlyContinue
   Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Proefversies.lnk" -Force -Recurse -ErrorAction SilentlyContinue
+  
+  Write-Log "HP bloatware removed."
 }
 elseif ($Manufacturer -eq "LENOVO") {
   Write-Host "This is an Lenovo and we're about to remove bloatware..." -BackgroundColor Blue
@@ -337,6 +359,7 @@ elseif ($Manufacturer -eq "LENOVO") {
   Expand-Archive -Path $KillMcAfee -DestinationPath "C:\temp"
   Start-Process -Wait -FilePath "C:\temp\MCPR\Mccleanup.exe" -ArgumentList "-p StopServices,MFSY,PEF,MXD,CSP,Sustainability,MOCP,MFP,APPSTATS,Auth,EMproxy,FWdiver,HW,MAS,MAT,MBK,MCPR,McProxy,McSvcHost,VUL,MHN,MNA,MOBK,MPFP,MPFPCU,MPS,SHRED,MPSCU,MQC,MQCCU,MSAD,MSHR,MSK,MSKCU,MWL,NMC,RedirSvc,VS,REMEDIATION,MSC,YAP,TRUEKEY,LAM,PCB,Symlink,SafeConnect,MGS,WMIRemover,RESIDUE -v -s" -WindowStyle Minimized
   # Read-Host -Prompt "At this point we should have silently remove McAfee etc"
+  Write-Log "Lenovo bloatware removed."
 }
 else {
   Write-Host "This host is not an HP or a Lenovo" -BackgroundColor Magenta
@@ -402,6 +425,7 @@ Write-Host "Running Get-WindowsUpdate" -BackgroundColor Magenta
 Get-WindowsUpdate -Hide -Title "Silverlight"
 Get-WindowsUpdate -install -acceptall -IgnoreReboot -Confirm:$false -Verbose -NotTitle "Silverlight"
 
+Write-Log "MIcrosoft Update (first run) complete.
 
 # Add 2rd stage to RunOnce Registry Key
 $value = "$($dir)\$($nextStage)"

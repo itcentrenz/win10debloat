@@ -9,6 +9,18 @@ $Exist = (Test-Path -Path $dir)
 If (-not $Exist ) {
     New-Item -Path $dir -ItemType directory
 }
+
+# Set up logging
+$logFile = "Focus_W11_Setup.log"
+$logFullPath = "$($logDir)\$($logFile)"
+
+Function Write-Log {
+    Param (
+        [string]$LogString
+    )
+    Add-Content -Path $logFullPath -Value $LogString
+}
+
 Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
 Get-Item $download_path | Unblock-File
 
@@ -18,6 +30,8 @@ Get-WindowsUpdate -install -acceptall -IgnoreReboot -Confirm:$false -Verbose
 
 # http://download.windowsupdate.com/d/msdownload/update/software/updt/2021/11/windows10.0-kb5007253-x64_56eae3ea4ddb22105db274b6d903cd73dfaea5ed.msu
 # x64 Feature Update
+
+Write-Log "Microsoft Update (second run) complete."
 
 Write-Host "Cleaning Up Temp Files"
 
@@ -41,6 +55,7 @@ $clnmgr = "cleanmgr.exe"
 $arguments = "/SAGERUN:1337"
 start-process $clnmgr $arguments -NoNewWindow -Wait
 # Read-Host "Did CleanMgr Work?"
+Write-Log "Disk Cleanup complete."
 
 # Add 3rd stage to RunOnce Registry Key
 $value = "$($dir)\$($nextStage)"
