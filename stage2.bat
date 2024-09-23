@@ -55,10 +55,14 @@ $clnmgr = "cleanmgr.exe"
 $arguments = "/SAGERUN:1337"
 start-process $clnmgr $arguments -NoNewWindow -Wait
 # Read-Host "Did CleanMgr Work?"
+
 Write-Log "Disk Cleanup complete."
 
 # Add 3rd stage to RunOnce Registry Key
 $value = "$($dir)\$($nextStage)"
 $name = "!$($nextStage)"
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name $name -Value $value -Force
+
+Write-Log "Stage 2 complete, rebooting."
+
 Restart-Computer -Force -Confirm:$false

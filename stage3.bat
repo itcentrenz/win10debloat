@@ -7,6 +7,18 @@ Stop-Process -name Sysprep -Force
 # Enable UAC prompts for Administrator
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v FilterAdministratorToken /t REG_DWORD /d 1 /f
 
+# Set up logging
+$logFile = "Focus_W11_Setup.log"
+$logFullPath = "$($logDir)\$($logFile)"
+
+Function Write-Log {
+    Param (
+        [string]$LogString
+    )
+    Add-Content -Path $logFullPath -Value $LogString
+}
+
+Write-Log "Setting up OOBE."
 $path = $Env:windir + '\system32\oobe\info\'
 If (-not(Test-Path -Path $path -PathType Container)) {
     $null = New-Item -ItemType Directory -Path $path -ErrorAction Continue
@@ -51,6 +63,7 @@ $SysPrep /quiet /oobe /reboot /unattend:$UnattendXML
 "@
 add-content $ScriptPath\runsysprep.cmd $SysPrepCMD
 
+Write-Log "OOBE Setup complete. Running Sysprep, followed by a reboot."
 $Exist = (Test-Path -Path $UnattendXML) -and (Test-Path -Path $ScriptPath\runsysprep.cmd)
 If ($Exist) {
     # & $SysPrep $cmdArgList

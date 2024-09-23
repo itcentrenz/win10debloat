@@ -86,40 +86,15 @@ Set-WinHomeLocation -GeoId 0xb7
 Set-WinUserLanguageList en-NZ -Force -Confirm:$false
 Write-Log "English-NZ installed."
 
-# Remove Microsoft News and Interests from Taskbar
-Write-Host "Remove News and Interests"
-$registryPath = "HKLM:SOFTWARE\Policies\Microsoft\Windows\Windows Feeds"
-$Name = "EnableFeeds"
-$value = "0"
-new-item 'HKLM:SOFTWARE\Policies\Microsoft\Windows' -Name 'Windows Feeds'
-$TaskBar = Get-Item -Path $registryPath -ErrorAction SilentlyContinue
-If($null -eq $TaskBar.GetValue($Name)) {
-   New-ItemProperty -Path $registryPath -Name $Name -Value $value -PropertyType DWord
-} else {
-   Set-ItemProperty -Path $registryPath -Name $Name -Value $value
-}
-
 # Prevent Edge from adding shortcuts to desktop
 reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\EdgeUpdate" /v "CreateDesktopShortcutDefault" /t REG_DWORD /d 0 /f /reg:64 | Out-Host
-
-Write-Host "Removing Meet Now from Taskbar"
-$registryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
-$Name = "HideSCAMeetNow"
-$value = "1"
-$Exist = Get-ItemProperty -Path $registryPath -Name $Name -ErrorAction SilentlyContinue
-if ($Exist) {
-    Set-ItemProperty -Path $registryPath -Name $Name -Value $value
-} Else {
-    New-ItemProperty -Path $registryPath -Name $Name -Value $value -PropertyType DWord
-}
-Write-Host "Removed Meet Now from Taskbar" -BackgroundColor Green -ForegroundColor Black
-Write-Log "Taskbar configured."
 
 Write-Host "Disable Turn-on Automatic Setup of Network Connected Devices"
 # DISABLE 'TURN ON AUTOMATIC SETUP OF NETWORK CONNECTED DEVICES' (Automatically adds printers)
 New-Item -Path "hklm:\SOFTWARE\Microsoft\Windows\CurrentVersion\NcdAutoSetup" -Name "Private"
 New-ItemProperty "hklm:\SOFTWARE\Microsoft\Windows\CurrentVersion\NcdAutoSetup\Private" -Name "AutoSetup" -Value 0 -PropertyType "DWord"
 Write-Host "Disabled Turn-on Automatic Setup of Network Connected Devices"
+Write-Log "Disabled Turn-on Automatic Setup of Network Connected Devices."
 
 Write-Host "Started Provisioned App Removal"
 #Provisioned App Removal List and afterwards loop through the remaining...
@@ -414,6 +389,34 @@ REG ADD "HKLM\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDes
 REG UNLOAD HKLM\Default
 #Read-Host -prompt "Customized Taskbar and Desktop reg values"
 
+# Remove Microsoft News and Interests from Taskbar
+Write-Host "Remove News and Interests"
+$registryPath = "HKLM:SOFTWARE\Policies\Microsoft\Windows\Windows Feeds"
+$Name = "EnableFeeds"
+$value = "0"
+new-item 'HKLM:SOFTWARE\Policies\Microsoft\Windows' -Name 'Windows Feeds'
+$TaskBar = Get-Item -Path $registryPath -ErrorAction SilentlyContinue
+If($null -eq $TaskBar.GetValue($Name)) {
+   New-ItemProperty -Path $registryPath -Name $Name -Value $value -PropertyType DWord
+} else {
+   Set-ItemProperty -Path $registryPath -Name $Name -Value $value
+}
+
+Write-Host "Removing Meet Now from Taskbar"
+$registryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
+$Name = "HideSCAMeetNow"
+$value = "1"
+$Exist = Get-ItemProperty -Path $registryPath -Name $Name -ErrorAction SilentlyContinue
+if ($Exist) {
+    Set-ItemProperty -Path $registryPath -Name $Name -Value $value
+} Else {
+    New-ItemProperty -Path $registryPath -Name $Name -Value $value -PropertyType DWord
+}
+Write-Host "Removed Meet Now from Taskbar" -BackgroundColor Green -ForegroundColor Black
+
+Write-Log "Taskbar configured."
+
+
 Clear-Host 
 Write-Host "Running Windows Updates" -BackgroundColor Blue
 Set-ExecutionPolicy Bypass -Force -Confirm:$false
@@ -432,4 +435,7 @@ $value = "$($dir)\$($nextStage)"
 $name = "!$($nextStage)"
 New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion" -Name "RunOnce" -Force
 Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name $name -Value $value -Force
+
+Write-Log "Stage 1 complete, rebooting."
+
 Restart-Computer -Force -Confirm:$false
