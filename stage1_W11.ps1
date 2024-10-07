@@ -428,7 +428,7 @@ Write-Host "Running Get-WindowsUpdate" -BackgroundColor Magenta
 Get-WindowsUpdate -Hide -Title "Silverlight"
 Get-WindowsUpdate -install -acceptall -IgnoreReboot -Confirm:$false -Verbose -NotTitle "Silverlight"
 
-Write-Log "MIcrosoft Update (first run) complete.
+Write-Log "Microsoft Update (first run) complete."
 
 # Add 2rd stage to RunOnce Registry Key
 $value = "$($dir)\$($nextStage)"
