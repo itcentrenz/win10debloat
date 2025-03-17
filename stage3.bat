@@ -8,6 +8,7 @@ Stop-Process -name Sysprep -Force
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v FilterAdministratorToken /t REG_DWORD /d 1 /f
 
 # Set up logging
+$logDir = "C:\Temp"
 $logFile = "Focus_W11_Setup.log"
 $logFullPath = "$($logDir)\$($logFile)"
 

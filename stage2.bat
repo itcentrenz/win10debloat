@@ -12,7 +12,7 @@ If (-not $Exist ) {
 
 # Set up logging
 $logFile = "Focus_W11_Setup.log"
-$logFullPath = "$($logDir)\$($logFile)"
+$logFullPath = "$($dir)\$($logFile)"
 
 Function Write-Log {
     Param (
