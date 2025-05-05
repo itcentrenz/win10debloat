@@ -194,7 +194,7 @@ catch {
   #Add-AppxPackage -Path $UI_XAML_path -confirm:$false
   Add-AppxPackage -Path $download_path -confirm:$false -DependencyPath "$env:USERPROFILE\Downloads\Dependencies\x64\*"
 }
-Read-Host -Promt "Press enter to continue."
+Read-Host -Prompt "Press enter to continue."
 
 $Applications = @(
   "Google.Chrome"
