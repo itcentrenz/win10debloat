@@ -170,23 +170,31 @@ catch {
   Get-Item $download_path | Unblock-File
 
   #WINGET Relies on VCLibs https://docs.microsoft.com/en-us/troubleshoot/cpp/c-runtime-packages-desktop-bridge
-  $VCLibsURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
-  $VCLibs_path = "$env:USERPROFILE\Downloads\Microsoft.VCLibs.x64.14.00.Desktop.appx"
-  Invoke-WebRequest -Uri $VCLibsURL -OutFile $VCLibs_path -UseBasicParsing
-  Get-Item $VCLibs_path | Unblock-File
+  #$VCLibsURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
+  #$VCLibs_path = "$env:USERPROFILE\Downloads\Microsoft.VCLibs.x64.14.00.Desktop.appx"
+  #Invoke-WebRequest -Uri $VCLibsURL -OutFile $VCLibs_path -UseBasicParsing
+  #Get-Item $VCLibs_path | Unblock-File
   
   #WINGET Relies on XAML 
-  $UI_XAML_URL = "https://github.com/itcentrenz/win10debloat/raw/main/Microsoft.UI.Xaml.2.8.appx"
-  $UI_XAML_path = "$env:USERPROFILE\Downloads\Microsoft.UI.Xaml.2.8.appx"
-  Invoke-WebRequest -Uri $UI_XAML_URL -OutFile $UI_XAML_path -UseBasicParsing
-  Get-Item $UI_XAML_path | Unblock-File
+  #$UI_XAML_URL = "https://github.com/itcentrenz/win10debloat/raw/main/Microsoft.UI.Xaml.2.8.appx"
+  #$UI_XAML_path = "$env:USERPROFILE\Downloads\Microsoft.UI.Xaml.2.8.appx"
+  #Invoke-WebRequest -Uri $UI_XAML_URL -OutFile $UI_XAML_path -UseBasicParsing
+  #Get-Item $UI_XAML_path | Unblock-File
 
+  #WINGET Dependencies
+  $Dependencies_url = "https://github.com/microsoft/winget-cli/releases/download/$latestVersion/DesktopAppInstaller_Dependencies.zip"
+  $Dependencies_path = "$env:USERPROFILE\Downloads\DesktopAppInstaller_Dependencies.zip"
+  Invoke-WebRequest -Uri $Dependencies_url -OutFile $Dependencies_path -UseBasicParsing
+  Get-Item $Dependencies_path | Unblock-File
+  Expand-Archive $Dependancies_path "$env:USERPROFILE\Downloads\Dependencies"
 
+  
   Import-Module -Name Appx -Force
-  Add-AppxPackage -Path $VCLibs_path -confirm:$false
-  Add-AppxPackage -Path $UI_XAML_path -confirm:$false
-  Add-AppxPackage -Path $download_path -confirm:$false
+  #Add-AppxPackage -Path $VCLibs_path -confirm:$false
+  #Add-AppxPackage -Path $UI_XAML_path -confirm:$false
+  Add-AppxPackage -Path $download_path -confirm:$false -DependencyPath "$env:USERPROFILE\Downloads\Dependencies\x64\*"
 }
+Read-Host -Promt "Press enter to continue."
 
 $Applications = @(
   "Google.Chrome"
