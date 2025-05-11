@@ -186,7 +186,7 @@ catch {
   $Dependencies_path = "$env:USERPROFILE\Downloads\DesktopAppInstaller_Dependencies.zip"
   Invoke-WebRequest -Uri $Dependencies_url -OutFile $Dependencies_path -UseBasicParsing
   Get-Item $Dependencies_path | Unblock-File
-  Expand-Archive $Dependancies_path "$env:USERPROFILE\Downloads\Dependencies"
+  Expand-Archive $Dependencies_path "$env:USERPROFILE\Downloads\Dependencies" -Force
 
   
   Import-Module -Name Appx -Force
