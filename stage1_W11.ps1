@@ -194,7 +194,6 @@ catch {
   #Add-AppxPackage -Path $UI_XAML_path -confirm:$false
   Add-AppxPackage -Path $download_path -confirm:$false -DependencyPath "$env:USERPROFILE\Downloads\Dependencies\x64\*"
 }
-Read-Host -Prompt "Press enter to continue."
 
 $Applications = @(
   "Google.Chrome"
@@ -308,7 +307,7 @@ If ($Manufacturer -eq "HP" -Or $Manufacturer -eq "Hewlett-Packard") {
 }
 elseif ($Manufacturer -eq "LENOVO") {
   Write-Host "This is an Lenovo and we're about to remove bloatware..." -BackgroundColor Blue
-  # Read-Host -Promt "Waiting for input"
+  # Read-Host -Prompt "Waiting for input"
   # List of built-in apps to remove
   $UninstallPackages = @(
       "4505Fortemedia.FMAPOControl"
