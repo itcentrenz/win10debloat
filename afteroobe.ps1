@@ -52,13 +52,14 @@ If($null -eq $TaskBar.GetValue($Name)) {
 #Remove suggestions from the Start Menu
 REG ADD "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v "SubscribedContent-338388Enabled" /t REG_DWORD /d 1 /f
 
+#Unpin Microsoft Store
+$appname = "Microsoft Store"
+((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | Where-Object{$_.Name -eq $appname}).Verbs() | Where-Object{$_.Name.replace('&','') -match 'Unpin from taskbar'} | ForEach-Object{$_.DoIt(); $exec = $true}
+
 #Rename PC and reboot
 If (Test-Path -Path "C:\temp\computername.txt") {
   $NewComputerName = get-content "C:\temp\computername.txt"
   Rename-Computer -NewName $NewComputerName -Force
-}
-else {
-  Write-Host "Unable to rename PC - do it manually"
 }
 
 # Install RMM Agent if it has been requested and copied over
@@ -76,10 +77,6 @@ $arguments = "/S"
 If($Exist){
   start-process -filepath "$ITCFolder\$AnyDesk" -ArgumentList $arguments -wait -passthru
 }
-
-#Unpin Microsoft Store
-$appname = "Microsoft Store"
-((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | Where-Object{$_.Name -eq $appname}).Verbs() | Where-Object{$_.Name.replace('&','') -match 'Unpin from taskbar'} | ForEach-Object{$_.DoIt(); $exec = $true}
 
 #Remove remaining files
 Remove-Item -Path "C:\temp\*" -Force -Recurse
