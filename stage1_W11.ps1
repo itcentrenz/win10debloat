@@ -29,37 +29,6 @@ Function Write-Log {
 # Disable UAC prompts for Administrator
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v FilterAdministratorToken /t REG_DWORD /d 0 /f
 
-# Removed the Rename operation for Windows 11, as it now prompts anyway
-# Write-Host "Renaming Computer"
-# Write-Host "Current computer name is: $env:COMPUTERNAME"
-# $NewComputerName = Read-Host "Enter new computer name, or just hit [Enter] to rename to serial number"
-# If ("" -eq $NewComputerName){
-#    $NewComputerName = Get-CimInstance -ClassName Win32_BIOS -Property SerialNumber | Select-Object -ExpandProperty SerialNumber
-# } 
-# add-content -Path "$($dir)\computername.txt" $NewComputerName
-# Write-Host "New computername after OOBE will be: $NewComputerName"
-
-$InstallITCTools = Read-Host "Would you like IT Centre Tools installed (Anydesk & N-Able RMM)? Y\[N]"
-If ("y" -eq $InstallITCTools.ToLower()){
-  #Run IT Centre Tools installation
-  New-Item -Path "c:\" -Name "IT Centre" -ItemType "directory"
-  $dir = "c:\IT Centre"
-  $filename = "AGENT.exe"
-  $download_path = "$($dir)\$($filename)"
-  #The following will break if the URL changes - update as required
-  $url = 'https://itcentre.nz/wp-content/uploads/2024/10/AGENT.exe'
-  Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
-  Get-Item $download_path | Unblock-File
-  $filename = "IT-Centre-AnyDesk-Setup.exe"
-  $download_path = "$($dir)\$($filename)"
-  #The following will break if the URL changes - update as required
-  $url = "https://itcentre.nz/wp-content/uploads/2023/09/IT-Centre-AnyDesk-Setup.exe"
-  Invoke-WebRequest -Uri $url -OutFile $download_path -UseBasicParsing
-  Get-Item $download_path | Unblock-File
-  #Installation of Agents takes place after OOBE so that the machine has the correct name
-  Write-Log "IT Centre tools set to install after OOBDE."
-} 
-
 #Add Windows Forms Assembly as it seems to be missing on a lot of machines
 Add-Type -AssemblyName System.Windows.Forms
 
@@ -220,6 +189,16 @@ Get-Item $M365Conf | Unblock-File
 Start-Process -Wait -FilePath $M365Setup -ArgumentList ("/configure " + $M365Conf)
 Write-Host "M365 install complete" -BackgroundColor Green -ForegroundColor Black
 Write-Log "M365 install complete."
+
+# Install Teams (New) for all users
+Write-Host "Installing Teams" -BackgroundColor Green -ForegroundColor Black
+$url = "https://go.microsoft.com/fwlink/?linkid=2243204&clcid=0x409"
+$TeamsSetup = "C:\Temp\teamsbootstrapper.exe"
+Invoke-WebRequest -Uri $url -OutFile $TeamsSetup -UseBasicParsing
+Get-Item $TeamsSetup | Unblock-File
+Start-Process -Wait -FilePath $TeamsSetup -ArgumentList "-p"
+Write-Host "Teams install complete" -BackgroundColor Green -ForegroundColor Black
+Write-Log "Teams install complete."
 
 #Ads deliver malware and lead users to install fake programs.
 Write-Host "Installing UBlock Origin Extension in Google Chrome" -BackgroundColor Blue
@@ -420,12 +399,12 @@ if ($Exist) {
     New-ItemProperty -Path $registryPath -Name $Name -Value $value -PropertyType DWord
 }
 Write-Host "Removed Meet Now from Taskbar" -BackgroundColor Green -ForegroundColor Black
+Write-Log "Taskbar and Start Menu configured."
 
-Write-Log "Taskbar configured."
 
-
-Clear-Host 
-Write-Host "Running Windows Updates" -BackgroundColor Blue
+Clear-Host
+Write-Log "Running Microsoft Update (first run)"
+Write-Host "Running Microsoft Updates" -BackgroundColor Blue
 Set-ExecutionPolicy Bypass -Force -Confirm:$false
 Install-PackageProvider -Name NuGet -Force
 Write-Host "Installed NuGet" -BackgroundColor Green -ForegroundColor Black
